@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Insurance BD</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <div>
+      <h1 id="appTitle" data-i18n="appTitle">Insurance BD</h1>
+      <p class="subtitle" data-i18n="appSubtitle">Track insurance policies, premiums and claims — fully offline.</p>
+    </div>
+    <button type="button" id="langBtn" class="btn btn-outline">&#2476;&#2494;&#2434;&#2482;&#2494;</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="card">
+    <h2 data-i18n="dashTitle">At a glance</h2>
+    <div class="dash-grid">
+      <div class="stat"><span class="stat-num" id="dashSumAssured">৳0</span><span class="stat-label" data-i18n="dashSumAssured">Total sum assured</span></div>
+      <div class="stat"><span class="stat-num" id="dashActive">0</span><span class="stat-label" data-i18n="dashActive">Active policies</span></div>
+      <div class="stat"><span class="stat-num" id="dashDueMonth">0</span><span class="stat-label" data-i18n="dashDueMonth">Premiums due this month</span></div>
+      <div class="stat"><span class="stat-num" id="dashOverdue">0</span><span class="stat-label" data-i18n="dashOverdue">Overdue premiums</span></div>
+      <div class="stat"><span class="stat-num" id="dashPaid">৳0</span><span class="stat-label" data-i18n="dashPaid">Premiums paid (all time)</span></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 id="formTitle" data-i18n="addTitle">Add a policy</h2>
+    <div class="form-grid">
+      <label><span data-i18n="insurerLabel">Insurer (company)</span>
+        <input type="text" id="insurerInput" data-i18n-ph="insurerPh" placeholder="e.g. Jiban Bima Corporation" maxlength="60" autocomplete="off">
+      </label>
+      <label><span data-i18n="typeLabel">Policy type</span>
+        <select id="typeSelect"></select>
+      </label>
+      <label><span data-i18n="policyNoLabel">Policy number</span>
+        <input type="text" id="policyNoInput" data-i18n-ph="policyNoPh" placeholder="e.g. JB-2026-12345" maxlength="30" autocomplete="off">
+      </label>
+      <label><span data-i18n="holderLabel">Policy holder</span>
+        <input type="text" id="holderInput" data-i18n-ph="holderPh" placeholder="e.g. Rahim Uddin" maxlength="60" autocomplete="off">
+      </label>
+      <label><span data-i18n="sumAssuredLabel">Sum assured (৳)</span>
+        <input type="number" id="sumAssuredInput" min="10000" max="100000000" step="1" inputmode="numeric" placeholder="1000000">
+      </label>
+      <label><span data-i18n="premiumLabel">Premium per payment (৳)</span>
+        <input type="number" id="premiumInput" min="100" max="10000000" step="1" inputmode="numeric" placeholder="2500">
+      </label>
+      <label><span data-i18n="frequencyLabel">Premium frequency</span>
+        <select id="frequencySelect"></select>
+      </label>
+      <label><span data-i18n="statusLabel">Status</span>
+        <select id="statusSelect"></select>
+      </label>
+      <label><span data-i18n="startDateLabel">Start date</span>
+        <input type="date" id="startDateInput">
+      </label>
+      <label><span data-i18n="nextDueLabel">Next premium due</span>
+        <input type="date" id="nextDueInput">
+      </label>
+      <label><span data-i18n="maturityLabel">Maturity date</span>
+        <input type="date" id="maturityInput">
+      </label>
+      <label><span data-i18n="nomineeLabel">Nominee</span>
+        <input type="text" id="nomineeInput" data-i18n-ph="nomineePh" placeholder="e.g. Fatema Begum" maxlength="60" autocomplete="off">
+      </label>
+      <label><span data-i18n="phoneLabel">Nominee mobile (optional)</span>
+        <input type="tel" id="phoneInput" data-i18n-ph="phonePh" placeholder="01XXXXXXXXX" maxlength="11" inputmode="numeric" autocomplete="off">
+      </label>
+    </div>
+    <p class="muted" data-i18n="formHint">Sum assured ৳10,000–৳10,00,00,000 · premium ৳100–৳1,00,00,000 per payment.</p>
+    <div class="btn-row">
+      <button type="button" id="savePolicyBtn" class="btn btn-primary" data-i18n="saveBtn">Save policy</button>
+      <button type="button" id="cancelEditBtn" class="btn" data-i18n="cancelEditBtn" hidden>Cancel edit</button>
+    </div>
+    <p class="error" id="formError" hidden></p>
+    <p class="success" id="formMsg" hidden></p>
+  </section>
+
+  <section class="card">
+    <h2 data-i18n="policiesTitle">My policies</h2>
+    <div class="filter-row">
+      <input type="search" id="searchInput" data-i18n-ph="searchPh" placeholder="Search insurer, policy no., holder or nominee…" autocomplete="off">
+      <select id="typeFilter" aria-label="Type"></select>
+      <select id="statusFilter" aria-label="Status"></select>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th data-i18n="colInsurer">Insurer</th>
+            <th data-i18n="colType">Type</th>
+            <th data-i18n="colPolicyNo">Policy no.</th>
+            <th data-i18n="colHolder">Holder</th>
+            <th class="num" data-i18n="colSumAssured">Sum assured</th>
+            <th class="num" data-i18n="colPremium">Premium</th>
+            <th class="num" data-i18n="colNextDue">Next due</th>
+            <th class="num" data-i18n="colMaturity">Maturity</th>
+            <th data-i18n="colStatus">Status</th>
+            <th data-i18n="colActions">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="policiesBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 data-i18n="paymentsTitle">Premium payments</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="num" data-i18n="colDate">Date</th>
+            <th data-i18n="colPolicy">Policy</th>
+            <th class="num" data-i18n="colAmount">Amount</th>
+            <th data-i18n="colNote">Note</th>
+          </tr>
+        </thead>
+        <tbody id="paymentsBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 data-i18n="claimsTitle">Claims</h2>
+    <div class="form-grid three">
+      <label><span data-i18n="claimPolicyLabel">Policy</span>
+        <select id="claimPolicySelect"></select>
+      </label>
+      <label><span data-i18n="claimAmountLabel">Claim amount (৳)</span>
+        <input type="number" id="claimAmountInput" min="1" max="100000000" step="1" inputmode="numeric" placeholder="50000">
+      </label>
+      <label><span data-i18n="claimDateLabel">Claim date</span>
+        <input type="date" id="claimDateInput">
+      </label>
+      <label><span data-i18n="claimStatusLabel">Claim status</span>
+        <select id="claimStatusSelect"></select>
+      </label>
+    </div>
+    <div class="btn-row">
+      <button type="button" id="addClaimBtn" class="btn btn-primary" data-i18n="addClaimBtn">File claim</button>
+    </div>
+    <p class="error" id="claimError" hidden></p>
+    <p class="success" id="claimMsg" hidden></p>
+    <div class="table-wrap" style="margin-top:14px">
+      <table>
+        <thead>
+          <tr>
+            <th class="num" data-i18n="colDate">Date</th>
+            <th data-i18n="colPolicy">Policy</th>
+            <th class="num" data-i18n="colAmount">Amount</th>
+            <th data-i18n="claimStatusLabel">Claim status</th>
+          </tr>
+        </thead>
+        <tbody id="claimsBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 data-i18n="dataTitle">My data</h2>
+    <div class="btn-row">
+      <button type="button" id="sampleBtn" class="btn" data-i18n="sampleBtn">Load sample policies</button>
+      <button type="button" id="exportBtn" class="btn" data-i18n="exportBtn">Export JSON</button>
+      <button type="button" id="importBtn" class="btn" data-i18n="importBtn">Import JSON</button>
+      <button type="button" id="eraseBtn" class="btn btn-danger" data-i18n="eraseBtn">Erase all data</button>
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
+    </div>
+    <p class="success" id="dataMsg" hidden></p>
+  </section>
+
+  <footer>
+    <p class="muted" data-i18n="footerNote">Personal tracker only — not financial advice. Always confirm premium, due date and sum assured with your insurer before paying.</p>
+  </footer>
+</main>
+
+<script src="js/logic.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
